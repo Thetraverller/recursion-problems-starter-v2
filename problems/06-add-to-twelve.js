@@ -13,7 +13,25 @@ addToTwelve([1]); // false
 ***********************************************************************/
 
 // your code here
+function addToTwelve(arr) {
+  let i = arr.length - 1
+  let i2 = arr.length - 2
+  if(arr.length === 1) {     //baseCase
+    return false
+  }
+  if (arr[i] + arr[i2] === 12) {
+    return true
+  }
+  arr.pop()               //recurse
+  return addToTwelve(arr)
+}
 
+//------------------------
+console.log(addToTwelve([1, 3, 4, 7, 5])); // true
+console.log(addToTwelve([1, 3, 4, 7, 6])); // false
+console.log(addToTwelve([1, 11, 4, 7, 6])); // true
+console.log(addToTwelve([1, 12, 4, 7, 6])); // false
+console.log(addToTwelve([1])); // false
 /**************DO NOT MODIFY ANYTHING UNDER THIS LINE*****************/
 try {
   module.exports = addToTwelve;

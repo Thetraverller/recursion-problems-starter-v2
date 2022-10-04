@@ -20,11 +20,25 @@ fibonacci(10); // 55
 ***********************************************************************/
 
 // your code here
-  
+function fibonacci(n) {
+  if (n < 2) {     // base cases give the numeric result (adding lots of fib(1))
+    return n       // builds back from base cases
+  }
+  // console.log(n)
+
+  return fibonacci(n -1) +  fibonacci(n - 2)
+
+}
+//------------------
+// console.log(fibonacci(1)); // 1
+// console.log(fibonacci(2)); // 1
+// console.log(fibonacci(3)); // 2
+// console.log(fibonacci(4)); // 3
+console.log(fibonacci(10)); // 55
+
 /**************DO NOT MODIFY ANYTHING UNDER THIS LINE*****************/
 try {
   module.exports = fibonacci;
 } catch (e) {
   module.exports = null;
 }
-  

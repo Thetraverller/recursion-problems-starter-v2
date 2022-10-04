@@ -56,13 +56,97 @@ combinations.
 function greedyMakeChange(target, coins = [25, 10, 5, 1]) {
   // no tests for greedyMakeChange so make sure to test this on your own
   // your code here
+
+  function makeChange(amount, usableCoins) {
+    let change = [];
+    const unchecked = usableCoins.slice(1);
+    let remainder;
+
+    if (usableCoins.length === 0 && amount > 0) {
+      change.push(null);
+      return change;
+    } else if (usableCoins.length === 0) {
+      return change;
+    }
+
+    const coin1 = usableCoins[0];
+    const times = Math.floor(amount / coin1);
+
+    if (times < 1) {
+      change.push(...makeChange(amount, unchecked));
+    } else {
+      remainder = amount - (coin1 * times);
+      change = Array(times).fill(coin1);
+      change.push(...makeChange(remainder, unchecked));
+    }
+
+    return change;
+  }
+
+  const greedyChange = makeChange(target, coins);
+
+  return greedyChange.includes(null) ? null : greedyChange;
 }
 
+// Understood solution and modified
+// Solution from: https://stackoverflow.com/questions/32643357/implementing-a-recursive-coin-change-function-in-javascript
 function makeBetterChange(target, coins = [25, 10, 5, 1]) {
   // your code here
+  const sortedCoins = coins.sort((a, b) => b - a);
+
+  function makeChangeWithCount(amount, usableCoins) {
+    if (amount === 0) {
+      return [0, []];
+    }
+
+    if (usableCoins.length === 0 && amount > 0) {
+      return [Infinity, []];
+    }
+
+    if (usableCoins[0] > amount) {
+      return makeChangeWithCount(amount, usableCoins.slice(1));
+    } else {
+      let loseIt = makeChangeWithCount(amount, usableCoins.slice(1));
+      let useIt = makeChangeWithCount(amount - usableCoins[0], usableCoins);
+
+      // If losing it leads to using less usableCoins than using it does then lose it
+      if(loseIt[0] < 1 + useIt[0]) {
+        return loseIt;
+      } else {
+        // Else use it
+        useIt[1].unshift(usableCoins[0])
+        return [1 + useIt[0], useIt[1]];
+      }
+    }
+  }
+
+  const changeWithCount = makeChangeWithCount(target, sortedCoins);
+
+  return changeWithCount[0] === Infinity ? null: changeWithCount[1];
 }
 
+//-------------------
 
+// greedyMakeChange
+
+console.log(greedyMakeChange(21)); // [ 10, 10, 1 ]
+console.log(greedyMakeChange(75)); // [ 25, 25, 25 ]
+console.log(greedyMakeChange(33, [15, 3])); // [ 15, 15, 3 ]
+console.log(greedyMakeChange(34, [15, 3])); // null
+console.log(greedyMakeChange(24, [10, 7, 1])) // [ 10, 10, 1, 1, 1, 1 ]
+
+
+// makeBetterChange
+
+console.log(makeBetterChange(21)); // [ 10, 10, 1 ]
+console.log(makeBetterChange(75)); // [ 25, 25, 25 ]
+console.log(makeBetterChange(33, [15, 3])); // [ 15, 15, 3 ]
+console.log(makeBetterChange(34, [15, 3])); // null
+console.log(makeBetterChange(24, [10, 7, 1])) // [ 10, 7, 7 ]
+console.log(makeBetterChange(12, [9, 6, 1]));                   // [ 6, 6 ]
+console.log(makeBetterChange(48, [1, 5, 10, 25, 50]));          // [ 25, 10, 10, 1, 1, 1 ]
+console.log(makeBetterChange(48, [1, 7, 24, 42]));              // [ 24, 24 ]
+console.log(makeBetterChange(189, [1, 77, 17, 63, 92, 8, 14])); // [ 63, 63, 63 ]
 /**************DO NOT MODIFY ANYTHING UNDER THIS LINE*****************/
 try {
   module.exports = makeBetterChange
